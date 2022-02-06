@@ -23,7 +23,9 @@
             android:authorities="net.ivanvega.basededatoslocalconrooma.provider"
             android:name=".provider.MiContentProvider"
             android:exported="true"
-            ></provider>
+            android:readPermission="true"
+            android:writePermission="true">
+        </provider>
 
     </application>
 

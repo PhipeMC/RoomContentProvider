@@ -73,15 +73,14 @@ public class MiContentProvider extends ContentProvider {
         UserDao dao = db.userDao();
         switch (sURIMatcher.match(uri)){
                 case 1:
-
-                cursor =   listUserToCursorUser( dao.getAll());
+                cursor = listUserToCursorUser(dao.getAll());
                 break;
             case 2:
-                break;
 
+                break;
             case 3:
-                break;
 
+                break;
         }
         return cursor;
     }
@@ -118,7 +117,6 @@ public class MiContentProvider extends ContentProvider {
         User usuario= new User();;
         switch (sURIMatcher.match(uri)){
             case 1:
-
                 usuario.firstName = contentValues.getAsString(UsuarioContrato.COLUMN_FIRSTNAME);
                 usuario.lastName = contentValues.getAsString(UsuarioContrato.COLUMN_LASTNAME);
 
@@ -132,13 +130,11 @@ public class MiContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-
         switch (sURIMatcher.match(uri)){
             case 2:
 
                 break;
         }
-
         return 0;
     }
 
@@ -146,21 +142,16 @@ public class MiContentProvider extends ContentProvider {
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues,
                           @Nullable String s, @Nullable String[] strings) {
 
-         int id  = Integer.parseInt( uri.getLastPathSegment());
+        int id  = Integer.parseInt(uri.getLastPathSegment());
 
-        AppDatabase db =
-                AppDatabase.getDatabaseInstance(getContext());
-        Cursor cursor= null;
+        AppDatabase db = AppDatabase.getDatabaseInstance(getContext());
+        Cursor cursor = null;
         UserDao dao = db.userDao();
-
         List<User> usuarioUpdate  =  dao.loadAllByIds(new int[]{id});
 
-        usuarioUpdate.get(0).firstName =
-                contentValues.getAsString(UsuarioContrato.COLUMN_FIRSTNAME );
-        usuarioUpdate.get(0).lastName =
-                contentValues.getAsString(UsuarioContrato.COLUMN_LASTNAME );
+        usuarioUpdate.get(0).firstName = contentValues.getAsString(UsuarioContrato.COLUMN_FIRSTNAME );
+        usuarioUpdate.get(0).lastName = contentValues.getAsString(UsuarioContrato.COLUMN_LASTNAME );
 
         return dao.updateUser(usuarioUpdate.get(0));
     }
-
 }
