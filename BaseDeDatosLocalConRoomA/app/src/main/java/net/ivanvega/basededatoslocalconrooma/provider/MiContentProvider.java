@@ -8,6 +8,7 @@ import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.InetAddresses;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,10 +30,10 @@ public class MiContentProvider extends ContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static
     {
-
-        sURIMatcher.addURI("net.ivanvega.basededatoslocalconrooma.provider","user", 1);
-        sURIMatcher.addURI("net.ivanvega.basededatoslocalconrooma.provider","user/#", 2);
-        sURIMatcher.addURI("net.ivanvega.basededatoslocalconrooma.provider","user/*", 3);
+        String authority = "net.ivanvega.basededatoslocalconrooma.provider";
+        sURIMatcher.addURI(authority, "/user",1);
+        sURIMatcher.addURI(authority, "/user/#",2);
+        sURIMatcher.addURI(authority, "/user/*",3);
     }
 
     @Override
@@ -41,12 +42,10 @@ public class MiContentProvider extends ContentProvider {
         return false;
     }
 
-    private Cursor listUserToCursorUser( List<User>   usuaarios){
-        MatrixCursor cursor = new MatrixCursor(new String[]{
-                "uid","first_name","last_name"
-        })    ;
+    private Cursor listUserToCursorUser( List<User> usuarios){
+        MatrixCursor cursor = new MatrixCursor(new String[]{"uid","first_name","last_name"});
 
-        for(User usuario: usuaarios ){
+        for(User usuario: usuarios ){
             cursor.newRow().add("uid", usuario.uid)
                     .add("first_name", usuario.firstName)
                     .add("last_name", usuario.lastName);
@@ -65,24 +64,23 @@ public class MiContentProvider extends ContentProvider {
                         @Nullable String[] strings1,
                         @Nullable String s1) {
 
-        AppDatabase db =
-                AppDatabase.getDatabaseInstance(getContext());
-
-        Cursor cursor= null;
-
+        AppDatabase db = AppDatabase.getDatabaseInstance(getContext());
         UserDao dao = db.userDao();
-        switch (sURIMatcher.match(uri)){
-                case 1:
-                cursor = listUserToCursorUser(dao.getAll());
-                break;
+        Log.d("MiContentProvider", "Got query with uri: " + uri.toString());
+
+        int match = sURIMatcher.match(uri);
+        Log.d("MiContentProvider", "Match: " + match);
+        switch (match){
+            case 1:
+                return listUserToCursorUser(dao.getAll());
             case 2:
-
-                break;
+                int id = Integer.parseInt(uri.getLastPathSegment());
+                List<User> usuarios = dao.loadAllByIds(new int[]{id});
+                return listUserToCursorUser(usuarios);
             case 3:
-
                 break;
         }
-        return cursor;
+        return null;
     }
 
     @Nullable
@@ -99,7 +97,6 @@ public class MiContentProvider extends ContentProvider {
                 typeMime = "vnd.android.cursor.item/vnd.net.ivanvega.basededatoslocalconrooma.provider.user";
                 break;
             case 3:
-
                 typeMime = "vnd.android.cursor.dir/vnd.net.ivanvega.basededatoslocalconrooma.provider.user";
                 break;
         }
@@ -110,8 +107,7 @@ public class MiContentProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri,
                       @Nullable ContentValues contentValues) {
-        AppDatabase db =
-                AppDatabase.getDatabaseInstance(getContext());
+        AppDatabase db = AppDatabase.getDatabaseInstance(getContext());
         Cursor cursor= null;
         UserDao dao = db.userDao();
         User usuario= new User();;
@@ -122,7 +118,6 @@ public class MiContentProvider extends ContentProvider {
 
                 long  newid = dao.insert(usuario);
                 return  Uri.withAppendedPath(uri, String.valueOf( newid));
-
         }
 
         return   Uri.withAppendedPath(uri, String.valueOf( -1))  ;
@@ -130,12 +125,13 @@ public class MiContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        switch (sURIMatcher.match(uri)){
-            case 2:
-
-                break;
-        }
-        return 0;
+        AppDatabase db = AppDatabase.getDatabaseInstance(getContext());
+        UserDao dao = db.userDao();
+        int id = Integer.parseInt(uri.getLastPathSegment());
+        List<User> usuarios = dao.loadAllByIds(new int[]{id});
+        if(usuarios.size() == 0) return 0;
+        dao.deleteUser(usuarios.get(0));
+        return 1;
     }
 
     @Override

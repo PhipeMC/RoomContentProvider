@@ -5,40 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    <EditText
+        android:id="@+id/txtID"
+        android:hint="ID"
+        android:textColorHint="@color/design_default_color_primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <EditText
+        android:id="@+id/txtNombre"
+        android:hint="Nombre"
+        android:textColorHint="@color/design_default_color_primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <EditText
+        android:id="@+id/txtApellido"
+        android:hint="Apellido"
+        android:textColorHint="@color/design_default_color_primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <Button
-        android:id="@+id/btnConsultar"
+        android:id="@+id/btnInsertar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Consultar Contnt Provi" />
-
-
+        android:text="Insertar"/>
     <Button
-        android:id="@+id/btnInsert"
+        android:id="@+id/btnActualiza"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Insert Contnt Provi">
-
-
-    </Button>
-
+        android:text="Actualizar"/>
     <Button
-        android:id="@+id/btnUpdate"
+        android:id="@+id/btnBorrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update Contnt Provi" />
-
-
+        android:text="Borrar"/>
+    <Button
+        android:id="@+id/btnLeer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Consulta"/>
 
 </LinearLayout>

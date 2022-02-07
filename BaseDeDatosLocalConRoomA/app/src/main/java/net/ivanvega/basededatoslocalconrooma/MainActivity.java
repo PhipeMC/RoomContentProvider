@@ -28,7 +28,7 @@ Button btnIn ;
 
         btnIn = findViewById(R.id.btnInsert);
 
-       btnIn.setOnClickListener(view -> {
+        btnIn.setOnClickListener(view -> {
 
            AppDatabase db =
                    AppDatabase.getDatabaseInstance(getApplication());

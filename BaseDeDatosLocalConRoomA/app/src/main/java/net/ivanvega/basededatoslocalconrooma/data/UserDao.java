@@ -28,13 +28,8 @@ public interface UserDao {
     long insert(User user);
 
     @Delete
-    void delete(User user);
+    void deleteUser(User user);
 
     @Update
     int updateUser(User user);
-
-    @Delete
-    int deleteUser(User user);
-
-
 }

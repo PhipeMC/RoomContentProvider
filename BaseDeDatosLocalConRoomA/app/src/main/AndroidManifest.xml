@@ -23,10 +23,11 @@
             android:authorities="net.ivanvega.basededatoslocalconrooma.provider"
             android:name=".provider.MiContentProvider"
             android:exported="true"
-            android:readPermission="true"
-            android:writePermission="true">
-        </provider>
+            android:grantUriPermissions="true"
+            android:readPermission="net.ivanvega.basededatoslocalconrooma.provider"
+            android:writePermission="net.ivanvega.basededatoslocalconrooma.provider"
+            ></provider>
 
     </application>
-
+    <permission android:name="net.ivanvega.basededatoslocalconrooma.provider"/>
 </manifest>

@@ -9,98 +9,109 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.UserDictionary;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
-
-    private void consultarContentProvider(){
-        Cursor cursor = getContentResolver().query(
-                UsuarioContrato.CONTENT_URI,
-                UsuarioContrato.COLUMNS_NAME,
-                null,null,null
-        );
-
-        if(cursor!=null) {
-
-            while (cursor.moveToNext()) {
-                Log.d("CPCliente",
-                        cursor.getInt(0) + " - " + cursor.getString(1)
-                );
-            }
-        }else{
-            Log.d("USUARIOCONTENTPROVIDER",
-                    "NO DEVUELVE"
-            );
-        }
-
-    }
+    Button btnInsertar;
+    Button btnLeer;
+    Button btnActualiza;
+    Button btnBorra;
+    TextView txt;
+    EditText txtID, txtNombre, txtApellido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        txtID = findViewById(R.id.txtID);
+        txtNombre = findViewById(R.id.txtNombre);
+        txtApellido = findViewById(R.id.txtApellido);
+        btnLeer = findViewById(R.id.btnLeer);
+        btnInsertar = findViewById(R.id.btnInsertar);
+        btnActualiza = findViewById(R.id.btnActualiza);
+        btnBorra = findViewById(R.id.btnBorrar);
 
-        Cursor c = getContentResolver().query(UserDictionary.Words.CONTENT_URI,
-                new String[] {UserDictionary.Words.WORD,
-                        UserDictionary.Words.LOCALE},
-                null,null,null
-                );
-        if(c!=null) {
-            while (c.moveToNext()) {
-                Log.d("DICCIONARIOUSARUI",
-                        c.getString(0) + " - " + c.getString(1)
-                );
-            }
-        }
-
-        consultarContentProvider();
-
-        findViewById(R.id.btnInsert).setOnClickListener(
-                view -> {
-
-                    ContentValues cv = new ContentValues();
-                    cv.put(UsuarioContrato.COLUMN_FIRSTNAME, "Pedro");
-                    cv.put(UsuarioContrato.COLUMN_LASTNAME, "Dominguez");
-
-                    Uri uriInsert = getContentResolver().insert(
-                            UsuarioContrato.CONTENT_URI,
-                            cv
-                    );
-                    Log.d("CPCliente", uriInsert.toString() );
-                    Toast.makeText(this, "Usuario insert: \n"+
-                            uriInsert.toString(), Toast.LENGTH_SHORT).show();
-
-
-                }
-        );
-
-
-        findViewById(R.id.btnUpdate).setOnClickListener(
-                view -> {
-
-                    ContentValues cv = new ContentValues();
-                    cv.put(UsuarioContrato.COLUMN_FIRSTNAME, "Pablo");
-                    cv.put(UsuarioContrato.COLUMN_LASTNAME, "Herrera");
-
-                    int elemtosAfectados = getContentResolver().update(
-                            Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, "15")   ,
-                            cv,
-                            null, null
-                    );
-
-                    Log.d("CPCliente", "Elementos afectados: " +elemtosAfectados );
-                    Toast.makeText(this, "Usuario update: \n"+
-                            elemtosAfectados, Toast.LENGTH_SHORT).show();
-
-
-                }
-        );
-
-        findViewById(R.id.btnConsultar).setOnClickListener(v -> {
-            consultarContentProvider();
+        btnInsertar.setOnClickListener(view -> {
+            insertaValor();
         });
+        btnLeer.setOnClickListener(view -> {
+            leeValores();
+        });
+        btnActualiza.setOnClickListener(view -> {
+            actualizaDatos();
+        });
+        btnBorra.setOnClickListener(view -> {
+            borraValor();
+        });
+    }
 
+    private void borraValor() {
+        String id = txtID.getText().toString();
+
+        limpiaCajas();
+
+        Uri nuevaUri = Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, id);
+        int resultado = getContentResolver().delete(nuevaUri, null, null);
+        Log.d("MainActivity","Borrado: " + resultado);
+    }
+
+    private void actualizaDatos() {
+        String id = txtID.getText().toString();
+        String nombre = txtNombre.getText().toString();
+        String apellido = txtApellido.getText().toString();
+
+        limpiaCajas();
+
+        ContentValues valores = new ContentValues();
+        valores.put(UsuarioContrato.COLUMN_FIRSTNAME, nombre);
+        valores.put(UsuarioContrato.COLUMN_LASTNAME, apellido);
+
+        Uri nuevaUri = Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, id);
+        int resultado = getContentResolver().update(nuevaUri, valores, null, null);
+        Log.d("MainActivity","Actualizado: " + resultado);
+    }
+
+    private void limpiaCajas() {
+        txtID.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+    }
+
+    private void leeValores() {
+        StringBuilder builder = new StringBuilder();
+        Uri contentUri = UsuarioContrato.CONTENT_URI;
+        String[] columnas = UsuarioContrato.COLUMNS_NAME;
+        Cursor cursor = getContentResolver().query(contentUri, columnas,
+                null, null, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String s0 = cursor.getString(0);
+                String s1 = cursor.getString(1);
+                String s2 = cursor.getString(2);
+                String datos = String.format("%s-%s-%s", s0, s1, s2);
+                builder.append(datos);
+                builder.append('\n');
+            }
+            Log.d("MainActivity", builder.toString());
+        } else {
+            Log.d("MainActivity", "Cursor nulo");
+        }
+    }
+
+    private void insertaValor() {
+        String nombre = txtNombre.getText().toString();
+        String apellido = txtApellido.getText().toString();
+
+        limpiaCajas();
+
+        ContentValues valores = new ContentValues();
+        valores.put(UsuarioContrato.COLUMN_FIRSTNAME, nombre);
+        valores.put(UsuarioContrato.COLUMN_LASTNAME, apellido);
+        Uri nuevoUsuario = getContentResolver().insert(UsuarioContrato.CONTENT_URI, valores);
+        Log.d("MainActivity","Insertado: " + nuevoUsuario.toString());
     }
 }
