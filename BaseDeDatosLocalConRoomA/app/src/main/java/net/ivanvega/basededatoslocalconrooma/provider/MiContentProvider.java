@@ -138,15 +138,15 @@ public class MiContentProvider extends ContentProvider {
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues,
                           @Nullable String s, @Nullable String[] strings) {
 
-        int id  = Integer.parseInt(uri.getLastPathSegment());
+        int id  = Integer.parseInt( uri.getLastPathSegment());
 
         AppDatabase db = AppDatabase.getDatabaseInstance(getContext());
         Cursor cursor = null;
         UserDao dao = db.userDao();
-        List<User> usuarioUpdate  =  dao.loadAllByIds(new int[]{id});
 
-        usuarioUpdate.get(0).firstName = contentValues.getAsString(UsuarioContrato.COLUMN_FIRSTNAME );
-        usuarioUpdate.get(0).lastName = contentValues.getAsString(UsuarioContrato.COLUMN_LASTNAME );
+        List<User> usuarioUpdate = dao.loadAllByIds(new int[]{id});
+        usuarioUpdate.get(0).firstName = contentValues.getAsString(UsuarioContrato.COLUMN_FIRSTNAME);
+        usuarioUpdate.get(0).lastName = contentValues.getAsString(UsuarioContrato.COLUMN_LASTNAME);
 
         return dao.updateUser(usuarioUpdate.get(0));
     }

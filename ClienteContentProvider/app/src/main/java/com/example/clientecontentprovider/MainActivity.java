@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     Button btnLeer;
     Button btnActualiza;
     Button btnBorra;
-    TextView txt;
     EditText txtID, txtNombre, txtApellido;
 
     @Override
